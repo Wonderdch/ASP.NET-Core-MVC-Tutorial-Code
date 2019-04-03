@@ -35,8 +35,14 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Album" asp-action="Index">Albums</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">用户管理</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                管理
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">用户管理</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Index">角色管理</a>
+                            </div>
                         </li>
                     </ul>
                 </div>
