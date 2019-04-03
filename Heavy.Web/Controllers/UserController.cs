@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Heavy.Web.Models;
 using Heavy.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Heavy.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrators")]
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
