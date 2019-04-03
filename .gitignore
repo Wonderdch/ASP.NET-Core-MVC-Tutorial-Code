@@ -5,3 +5,5 @@
 /.vs/ASP.NET-Core-MVC-Tutorial-Code/v15
 /.vs
 /Heavy.Web/obj
+/Heavy.Web/bin/Debug/netcoreapp2.2
+/Heavy.Web/Heavy.Web.csproj.user
