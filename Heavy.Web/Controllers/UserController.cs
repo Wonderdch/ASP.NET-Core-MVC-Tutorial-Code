@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Heavy.Web.Data;
 using Heavy.Web.Models;
 using Heavy.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -12,10 +14,12 @@ namespace Heavy.Web.Controllers
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public UserController(UserManager<ApplicationUser> userManager)
+        public UserController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public async Task<IActionResult> Index()
@@ -67,10 +71,16 @@ namespace Heavy.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            var userEditViewModel=new UserEditViewModel
+            var claims = await _userManager.GetClaimsAsync(user);
+
+            var userEditViewModel = new UserEditViewModel
             {
+                Id = user.Id,
                 UserName = user.UserName,
-                Email = user.Email
+                Email = user.Email,
+                IdCard = user.IdCard,
+                BirthDate = user.BirthDate,
+                Claims = claims.Select(c => c.Value).ToList()
             };
             return View(userEditViewModel);
         }
@@ -120,6 +130,50 @@ namespace Heavy.Web.Controllers
             }
 
             return View("Index", await _userManager.Users.ToListAsync());
+        }
+
+        public async Task<IActionResult> ManageClaims(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var vm = new ManageClaimsViewModel
+            {
+                UserId = id,
+                AllClaims = ClaimTypes.AllClaimTypeList
+            };
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManageClaims(ManageClaimsViewModel vm)
+        {
+            var user = await _userManager.FindByIdAsync(vm.UserId);
+            if (user == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var claim = new IdentityUserClaim<string>
+            {
+                ClaimType = vm.ClaimId,
+                ClaimValue = vm.ClaimId
+            };
+
+            user.Claims.Add(claim);
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("EditUser", new { id = vm.UserId });
+            }
+
+            ModelState.AddModelError(string.Empty, "编辑用户 Claims 时发生错误");
+            return View(vm);
         }
     }
 }
