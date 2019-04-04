@@ -169,6 +169,13 @@ namespace Heavy.Web.Controllers
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
+                // 代码刷新登录状态，让 Claim 的修改立即生效
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser.Id == vm.UserId)
+                {
+                    await _signInManager.RefreshSignInAsync(currentUser);
+                }
+
                 return RedirectToAction("EditUser", new { id = vm.UserId });
             }
 
