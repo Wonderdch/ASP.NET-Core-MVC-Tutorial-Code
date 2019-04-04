@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Collections.Generic;
+using Heavy.Web.Auth;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Heavy.Web.Data;
 using Heavy.Web.Models;
 using Heavy.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -60,8 +63,25 @@ namespace Heavy.Web
             {
                 options.AddPolicy("仅限管理员", policy => policy.RequireRole("Administrators"));
                 options.AddPolicy("编辑专辑", policy => policy.RequireClaim("Edit Albums"));
+
+                //options.AddPolicy("编辑专辑1", policy => policy.RequireClaim("Edit Albums", new List<string> { "123", "456", "789" }));
+
+                options.AddPolicy("编辑专辑1", policy => policy.RequireAssertion(context =>
+                {
+                    return context.User.HasClaim(c => c.Type == "Edit Albums");
+                }));
+
+                // 多个 Requirement 需同时满足
+                options.AddPolicy("编辑专辑2", policy => policy.AddRequirements(
+                     //new EmailRequirement("@126.com"),
+                     new QualifiedUserRequirement()));
             });
+
+            services.AddSingleton<IAuthorizationHandler, EmailHandler>();
+            services.AddSingleton<IAuthorizationHandler, CanEditAlbumHandler>();
+            services.AddSingleton<IAuthorizationHandler, AdministratorHandler>();
         }
+
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
