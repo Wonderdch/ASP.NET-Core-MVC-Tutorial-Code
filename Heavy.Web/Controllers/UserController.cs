@@ -35,6 +35,7 @@ namespace Heavy.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddUser(UserCreateViewModel userAddViewModel)
         {
             if (!ModelState.IsValid)
