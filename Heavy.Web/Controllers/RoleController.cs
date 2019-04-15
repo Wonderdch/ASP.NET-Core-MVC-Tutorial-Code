@@ -46,7 +46,7 @@ namespace Heavy.Web.Controllers
 
             var role = new IdentityRole { Name = roleAddViewModel.RoleName };
 
-            var result=await _roleManager.CreateAsync(role);
+            var result = await _roleManager.CreateAsync(role);
             if (result.Succeeded)
             {
                 return RedirectToAction("Index");
@@ -61,7 +61,7 @@ namespace Heavy.Web.Controllers
 
         public async Task<IActionResult> EditRole(string id)
         {
-            var role=await _roleManager.FindByIdAsync(id);
+            var role = await _roleManager.FindByIdAsync(id);
 
             if (role == null)
             {
@@ -75,7 +75,7 @@ namespace Heavy.Web.Controllers
                 Users = new List<string>()
             };
 
-            var users=await _userManager.Users.ToListAsync();
+            var users = await _userManager.Users.ToListAsync();
             foreach (var user in users)
             {
                 if (await _userManager.IsInRoleAsync(user, role.Name))
@@ -244,6 +244,20 @@ namespace Heavy.Web.Controllers
 
             ModelState.AddModelError(string.Empty, "用户或角色未找到");
             return View(userRoleViewModel);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> CheckRoleExist([Bind("RoleName")]string roleName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+
+            if (role != null)
+            {
+                //return Json("角色已经存在了");
+                return Json(false);
+            }
+
+            return Json(true);
         }
     }
 }
