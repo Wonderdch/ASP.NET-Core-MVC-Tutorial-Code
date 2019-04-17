@@ -7,3 +7,5 @@
 /Heavy.Web/obj
 /Heavy.Web/bin/Debug/netcoreapp2.2
 /Heavy.Web/Heavy.Web.csproj.user
+/Heavy.Web/logs
+/Heavy.Ltd.sln.DotSettings.user

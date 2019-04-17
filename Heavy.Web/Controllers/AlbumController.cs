@@ -1,26 +1,33 @@
 ﻿using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Heavy.Web.Data;
 using Heavy.Web.Models;
 using Heavy.Web.Services;
 using Heavy.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Heavy.Web.Controllers
 {
     [Authorize(Policy = "编辑专辑2")]
     public class AlbumController : Controller
     {
+        private readonly ILogger<AlbumController> _logger;
+
         private readonly IAlbumService _albumService;
 
         private readonly HtmlEncoder _htmlEncoder;
 
-        public AlbumController(IAlbumService albumService,
-            HtmlEncoder htmlEncoder)
+        public AlbumController(
+            IAlbumService albumService,
+            HtmlEncoder htmlEncoder,
+            ILogger<AlbumController> logger)
         {
             _albumService = albumService;
             _htmlEncoder = htmlEncoder;
+            _logger = logger;
         }
 
         // GET: Album
@@ -33,6 +40,12 @@ namespace Heavy.Web.Controllers
         // GET: Album/Details/5
         public async Task<ActionResult> Details(int id)
         {
+            // 推荐，会记录单独的 id 参数
+            _logger.LogInformation(MyLogEventIds.AlbumPage, "Visiting Album {0}", id);
+
+            // 不推荐，仅记录了字符串
+            _logger.LogInformation(MyLogEventIds.AlbumPage, $"Visiting Album {id}");
+
             var album = await _albumService.GetByIdAsync(id);
             if (album == null)
             {
