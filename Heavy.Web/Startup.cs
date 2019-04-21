@@ -12,7 +12,6 @@ using Heavy.Web.Filters;
 using Heavy.Web.Models;
 using Heavy.Web.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -98,7 +97,26 @@ namespace Heavy.Web
                 //options.Filters.Add(new LogResourceFilter());
                 //options.Filters.Add(typeof(LogAsyncResourceFilter));
                 options.Filters.Add<LogResourceFilter>();
+
+                options.CacheProfiles.Add("Default", new CacheProfile
+                {
+                    Duration = 60
+                });
+                options.CacheProfiles.Add("Never", new CacheProfile
+                {
+                    Location = ResponseCacheLocation.None,
+                    NoStore = true
+                });
             });
+
+            services.AddMemoryCache();
+            //services.AddDistributedRedisCache(options =>
+            //{
+            //    options.Configuration = "localhost";
+            //    options.InstanceName = "redis-for-albums";
+            //});
+
+            services.AddResponseCompression();
         }
 
 
@@ -117,6 +135,9 @@ namespace Heavy.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            // 默认使用 gzip 格式压缩
+            app.UseResponseCompression();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

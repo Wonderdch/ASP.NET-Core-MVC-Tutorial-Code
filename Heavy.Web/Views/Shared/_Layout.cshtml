@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Heavy.Web</title>
-
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     </environment>
@@ -53,17 +52,17 @@
         <partial name="_CookieConsentPartial" />
         <main role="main" class="pb-3">
             @RenderBody()
-            
-            @await Component.InvokeAsync("InternetStatus")
+
+            <cache expires-after="@TimeSpan.FromSeconds(30)">
+                @await Component.InvokeAsync("InternetStatus")
+            </cache>
         </main>
     </div>
-
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2019 - Heavy.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
@@ -86,18 +85,17 @@
         <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.17.0/jquery.validate.min.js"
                 asp-fallback-src="~/lib/jquery-validation/dist/jquery.validate.js"
                 asp-fallback-test="window.jQuery && window.jQuery.validator"
-                integrity="sha384-rZfj/ogBloos6wzLGpPkkOr/gpkBNLZ6b6yLy4o+ok+t/SAKlL5mvXLr0OXNi1Hp" 
+                integrity="sha384-rZfj/ogBloos6wzLGpPkkOr/gpkBNLZ6b6yLy4o+ok+t/SAKlL5mvXLr0OXNi1Hp"
                 crossorigin="anonymous">
         </script>
         <script src="https://cdn.bootcss.com/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.js"
                 asp-fallback-src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"
                 asp-fallback-test="window.jQuery && window.jQuery.validator && window.jQuery.validator.unobtrusive"
-                integrity="sha384-C8hjioqadbXfCfVhnT6NUWCL1hD9kTjwIhQ+c5Q/fVyXwav3uPly3e/0PN/X8Yd9" 
+                integrity="sha384-C8hjioqadbXfCfVhnT6NUWCL1hD9kTjwIhQ+c5Q/fVyXwav3uPly3e/0PN/X8Yd9"
                 crossorigin="anonymous">
         </script>
     </environment>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
     @RenderSection("Scripts", required: false)
 </body>
 </html>
